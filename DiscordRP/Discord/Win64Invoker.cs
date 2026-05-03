@@ -5,7 +5,7 @@ namespace DiscordRP.Discord
 {
     class Win64Invoker : DiscordRpcInvoker
     {
-        private const string DISCORD_RPC_LOCATION = "GameData/DiscordRP/Plugins/win64/discord-rpc.bin";
+        private const string DISCORD_RPC_LOCATION = "GameData/DiscordRPContinued/Plugins/win64/discord-rpc.bin";
 
         public void Initialize(string applicationId, ref DiscordRpc.EventHandlers handlers, bool autoRegister, string optionalSteamId)
         {

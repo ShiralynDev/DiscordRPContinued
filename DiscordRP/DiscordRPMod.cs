@@ -14,7 +14,7 @@ namespace DiscordRP
         private PresenceState state;
 
         private float lastUpdate = 0.0F;
-        private float updateInterval = 15.0F;
+        private float updateInterval = 5.0F;
 
         private bool initialized;
 

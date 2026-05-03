@@ -8,14 +8,16 @@ namespace DiscordRP.States
         private readonly CelestialBody body;
         private readonly double altitude;
         private readonly double velocity;
+        private readonly string craftName;
         private readonly long startTimestamp;
         private readonly bool paused;
 
-        public FlyingState(CelestialBody body, double altitude, double velocity, long startTimestamp, bool paused)
+        public FlyingState(CelestialBody body, double altitude, double velocity, string craftName, long startTimestamp, bool paused)
         {
             this.body = body;
             this.altitude = altitude;
             this.velocity = velocity;
+            this.craftName = craftName;
             this.startTimestamp = startTimestamp;
             this.paused = paused;
         }
@@ -24,9 +26,9 @@ namespace DiscordRP.States
         {
             if (obj != null && obj is FlyingState)
             {
-                FlyingState flyingState = (FlyingState) obj;
+                FlyingState flyingState = (FlyingState)obj;
 
-                return flyingState.body.Equals(body) && flyingState.altitude == altitude && flyingState.velocity == velocity && flyingState.startTimestamp == startTimestamp && flyingState.paused == paused;
+                return flyingState.body.Equals(body) && flyingState.altitude == altitude && flyingState.velocity == velocity && this.craftName == craftName && flyingState.startTimestamp == startTimestamp && flyingState.paused == paused;
             }
 
             return false;
@@ -39,7 +41,7 @@ namespace DiscordRP.States
             return new DiscordRpc.RichPresence()
             {
                 state = state,
-                details = string.Format("Alt: {0:F0}m | Vel: {1:F0}m/s", altitude, velocity),
+                details = string.Format("Flying in {0} | Alt: {1:F0}m | Vel: {2:F0}m/s", craftName, altitude, velocity),
                 largeImageKey = string.Format("body_{0}", body.name.ToLower()),
                 largeImageText = body.name,
                 startTimestamp = startTimestamp,

@@ -18,7 +18,7 @@ namespace DiscordRP
                 foreach (PartResource resource in part.Resources)
                 {
                     double unusedAmount = resource.maxAmount - resource.amount;
-                    cost -= (float) (unusedAmount * PartResourceLibrary.Instance.GetDefinition(resource.resourceName).unitCost);
+                    cost -= (float)(unusedAmount * PartResourceLibrary.Instance.GetDefinition(resource.resourceName).unitCost);
                 }
 
                 foreach (PartModule module in part.Modules)
@@ -55,9 +55,21 @@ namespace DiscordRP
             return parts;
         }
 
+        public static string GetCraftName()
+        {
+            string name = "a craft";
+
+            if (HighLogic.LoadedSceneIsEditor)
+            {
+                name = EditorLogic.fetch.ship.shipName;
+            }
+
+            return name;
+        }
+
         public static long GetEpochTime()
         {
-            return (long) (DateTime.UtcNow - EPOCH).TotalSeconds;
+            return (long)(DateTime.UtcNow - EPOCH).TotalSeconds;
         }
 
         public static bool IsWindows()

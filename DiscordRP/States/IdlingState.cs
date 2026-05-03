@@ -17,7 +17,7 @@ namespace DiscordRP.States
         {
             if (obj != null && obj is IdlingState)
             {
-                IdlingState idleState = (IdlingState) obj;
+                IdlingState idleState = (IdlingState)obj;
 
                 return idleState.startTimestamp == startTimestamp && idleState.scene == scene;
             }
@@ -43,19 +43,22 @@ namespace DiscordRP.States
 
         private String GetSceneDescription()
         {
+            int modCount = AssemblyLoader.loadedAssemblies.Count;
+            int activeVessels = FlightGlobals.VesselsLoaded.Count;
+
             switch (scene)
             {
                 case GameScenes.LOADING:
                 case GameScenes.LOADINGBUFFER:
-                    return "Loading Game";
+                    return string.Format("Loading Game, {0} mods loaded", modCount);
                 case GameScenes.MAINMENU:
-                    return "In the Main Menu";
+                    return string.Format("In the Main Menu, {0} mods loaded", modCount);
                 case GameScenes.SETTINGS:
                     return "Configuring their game";
                 case GameScenes.SPACECENTER:
                     return "At the KSC";
                 case GameScenes.TRACKSTATION:
-                    return "In the Tracking Station";
+                    return string.Format("In the Tracking Station, {0} vessels", activeVessels);
                 case GameScenes.CREDITS:
                     return "Watching the Credits";
             }

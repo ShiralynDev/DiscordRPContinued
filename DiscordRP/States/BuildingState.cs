@@ -6,13 +6,13 @@ namespace DiscordRP.States
     class BuildingState : PresenceState
     {
         private readonly int partCount;
-        private readonly double cost;
+        private readonly string craftName;
         private readonly long startTimestamp;
 
-        public BuildingState(int partCount, double cost, long startTimestamp)
+        public BuildingState(int partCount, string craftName, long startTimestamp)
         {
             this.partCount = partCount;
-            this.cost = cost;
+            this.craftName = craftName;
             this.startTimestamp = startTimestamp;
         }
 
@@ -20,9 +20,9 @@ namespace DiscordRP.States
         {
             if (obj != null && obj is BuildingState)
             {
-                BuildingState buildingState = (BuildingState) obj;
+                BuildingState buildingState = (BuildingState)obj;
 
-                return buildingState.cost == cost && buildingState.partCount == partCount && buildingState.startTimestamp == startTimestamp; ;
+                return buildingState.partCount == partCount && buildingState.craftName == craftName && buildingState.startTimestamp == startTimestamp; ;
             }
 
             return false;
@@ -32,8 +32,8 @@ namespace DiscordRP.States
         {
             return new DiscordRpc.RichPresence()
             {
-                state = "Building a craft",
-                details = string.Format("Cst: ${1:F0} | Prts: {0}", partCount, cost),
+                state = string.Format("{0} parts", partCount),
+                details = string.Format("Building {0}", craftName),
                 largeImageKey = "building_craft",
                 largeImageText = "Building a craft",
                 startTimestamp = startTimestamp,

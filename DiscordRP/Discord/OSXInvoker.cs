@@ -5,7 +5,7 @@ namespace DiscordRP.Discord
 {
     class OSXInvoker : DiscordRpcInvoker
     {
-        private const string DISCORD_RPC_LOCATION = "GameData/DiscordRP/Plugins/osx/discord-rpc.dylib";
+        private const string DISCORD_RPC_LOCATION = "GameData/DiscordRPContinued/Plugins/osx/discord-rpc.dylib";
 
         public void Initialize(string applicationId, ref DiscordRpc.EventHandlers handlers, bool autoRegister, string optionalSteamId)
         {

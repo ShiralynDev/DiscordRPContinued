@@ -5,7 +5,7 @@ namespace DiscordRP.Discord
 {
     class LinuxInvoker : DiscordRpcInvoker
     {
-        private const string DISCORD_RPC_LOCATION = "GameData/DiscordRP/Plugins/linux/discord-rpc.so"; 
+        private const string DISCORD_RPC_LOCATION = "GameData/DiscordRPContinued/Plugins/linux/discord-rpc.so"; 
 
         public void Initialize(string applicationId, ref DiscordRpc.EventHandlers handlers, bool autoRegister, string optionalSteamId)
         {

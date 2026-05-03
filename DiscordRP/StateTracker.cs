@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using DiscordRP.States;
+using System.Security.Cryptography;
 
 namespace DiscordRP
 {
@@ -12,7 +13,7 @@ namespace DiscordRP
         private readonly GameStateTimer buildingStateTimer;
 
         private readonly GameStateTimer idleStateTimer;
-        
+
         public bool Paused { private get; set; }
 
         public StateTracker()
@@ -50,7 +51,7 @@ namespace DiscordRP
                 }
                 else if (rootEditorPart != null)
                 {
-                    return new BuildingState(Utils.GetTotalParts(rootEditorPart), Utils.GetTotalCost(rootEditorPart), buildingStateTimer.Timestamp);
+                    return new BuildingState(Utils.GetTotalParts(rootEditorPart), Utils.GetCraftName(), buildingStateTimer.Timestamp);
                 }
             }
 
@@ -76,11 +77,11 @@ namespace DiscordRP
             }
             else if (activeVessel.mainBody.atmosphereDepth > activeVessel.altitude || periapsis < activeVessel.mainBody.Radius)
             {
-                return new FlyingState(activeVessel.mainBody, activeVessel.altitude, activeVessel.srfSpeed, launchStateTimer.Timestamp, Paused);
+                return new FlyingState(activeVessel.mainBody, activeVessel.altitude, activeVessel.srfSpeed, activeVessel.vesselName, launchStateTimer.Timestamp, Paused);
             }
             else
             {
-                return new OrbitingState(activeVessel.mainBody, activeVessel.orbit.semiMajorAxis, activeVessel.orbit.eccentricity, launchStateTimer.Timestamp, Paused);
+                return new OrbitingState(activeVessel.mainBody, activeVessel.orbit.semiMajorAxis, activeVessel.orbit.eccentricity, activeVessel.vesselName, launchStateTimer.Timestamp, Paused);
             }
         }
     }

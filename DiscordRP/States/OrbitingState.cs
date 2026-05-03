@@ -8,14 +8,16 @@ namespace DiscordRP.States
         private readonly CelestialBody body;
         private readonly double semiMajorAxis;
         private readonly double eccentricity;
+        private readonly string craftName;
         private readonly long startTimestamp;
         private readonly bool paused;
 
-        public OrbitingState(CelestialBody body, double semiMajorAxis, double eccentricity, long startTimestamp, bool paused)
+        public OrbitingState(CelestialBody body, double semiMajorAxis, double eccentricity, string craftName, long startTimestamp, bool paused)
         {
             this.body = body;
             this.semiMajorAxis = semiMajorAxis;
             this.eccentricity = eccentricity;
+            this.craftName = craftName;
             this.startTimestamp = startTimestamp;
             this.paused = paused;
         }
@@ -24,9 +26,9 @@ namespace DiscordRP.States
         {
             if (obj != null && obj is OrbitingState)
             {
-                OrbitingState orbitingState = (OrbitingState) obj;
+                OrbitingState orbitingState = (OrbitingState)obj;
 
-                return orbitingState.body.Equals(body) && orbitingState.semiMajorAxis == semiMajorAxis && orbitingState.eccentricity == eccentricity && orbitingState.startTimestamp == startTimestamp && orbitingState.paused == paused;
+                return orbitingState.body.Equals(body) && orbitingState.semiMajorAxis == semiMajorAxis && orbitingState.eccentricity == eccentricity && orbitingState.craftName == craftName && orbitingState.startTimestamp == startTimestamp && orbitingState.paused == paused;
             }
 
             return false;
@@ -34,7 +36,7 @@ namespace DiscordRP.States
 
         public DiscordRpc.RichPresence create()
         {
-            string state = state = string.Format("Orbiting around {0}", body.name);
+            string state = state = string.Format("Orbiting around {0} in {1}", body.name, craftName);
 
             return new DiscordRpc.RichPresence()
             {
