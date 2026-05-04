@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace DiscordRP.States
 {
@@ -44,7 +45,12 @@ namespace DiscordRP.States
         private String GetSceneDescription()
         {
             int modCount = AssemblyLoader.loadedAssemblies.Count;
-            int activeVessels = FlightGlobals.VesselsLoaded.Count;
+            int activeVessels = FlightGlobals.Vessels.Count(v =>
+                v.vesselType != VesselType.Debris &&
+                v.vesselType != VesselType.Flag &&
+                v.vesselType != VesselType.SpaceObject &&
+                v.vesselType != VesselType.Unknown
+            );
 
             switch (scene)
             {
