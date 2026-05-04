@@ -81,7 +81,7 @@ namespace DiscordRP
             }
             else
             {
-                return new OrbitingState(activeVessel.mainBody, activeVessel.orbit.semiMajorAxis, activeVessel.orbit.eccentricity, activeVessel.vesselName, launchStateTimer.Timestamp, Paused);
+                return new OrbitingState(activeVessel.mainBody, apoapsis, periapsis, activeVessel.orbit.eccentricity, activeVessel.vesselName, launchStateTimer.Timestamp, Paused);
             }
         }
     }

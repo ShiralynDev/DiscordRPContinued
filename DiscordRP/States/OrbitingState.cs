@@ -6,16 +6,18 @@ namespace DiscordRP.States
     class OrbitingState : PresenceState
     {
         private readonly CelestialBody body;
-        private readonly double semiMajorAxis;
+        private readonly double apoapsis;
+        private readonly double periapsis;
         private readonly double eccentricity;
         private readonly string craftName;
         private readonly long startTimestamp;
         private readonly bool paused;
 
-        public OrbitingState(CelestialBody body, double semiMajorAxis, double eccentricity, string craftName, long startTimestamp, bool paused)
+        public OrbitingState(CelestialBody body, double apoapsis, double periapsis, double eccentricity, string craftName, long startTimestamp, bool paused)
         {
             this.body = body;
-            this.semiMajorAxis = semiMajorAxis;
+            this.apoapsis = apoapsis;
+            this.periapsis = periapsis;
             this.eccentricity = eccentricity;
             this.craftName = craftName;
             this.startTimestamp = startTimestamp;
@@ -28,7 +30,7 @@ namespace DiscordRP.States
             {
                 OrbitingState orbitingState = (OrbitingState)obj;
 
-                return orbitingState.body.Equals(body) && orbitingState.semiMajorAxis == semiMajorAxis && orbitingState.eccentricity == eccentricity && orbitingState.craftName == craftName && orbitingState.startTimestamp == startTimestamp && orbitingState.paused == paused;
+                return orbitingState.body.Equals(body) && orbitingState.apoapsis == apoapsis && orbitingState.periapsis == periapsis && orbitingState.eccentricity == eccentricity && orbitingState.craftName == craftName && orbitingState.startTimestamp == startTimestamp && orbitingState.paused == paused;
             }
 
             return false;
@@ -41,7 +43,7 @@ namespace DiscordRP.States
             return new DiscordRpc.RichPresence()
             {
                 state = state,
-                details = string.Format("SMA: {0} | Ec: {1:F2}", Utils.FormatDistance(semiMajorAxis), eccentricity),
+                details = string.Format("AP {0:F0} | PE {1:F0} | Ec: {2:F2}", Utils.FormatDistance(apoapsis - body.Radius), Utils.FormatDistance(periapsis - body.Radius), eccentricity),
                 largeImageKey = string.Format("body_{0}", body.name.ToLower()),
                 largeImageText = body.name,
                 startTimestamp = startTimestamp,
