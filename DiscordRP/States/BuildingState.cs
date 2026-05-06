@@ -1,39 +1,30 @@
 ﻿using System;
 using UnityEngine;
+using DiscordRP.StateTextFormat;
 
 namespace DiscordRP.States
 {
     class BuildingState : PresenceState
     {
-        private readonly int partCount;
-        private readonly string craftName;
+        private string details;
+        private string state;
+        private readonly Part part;
         private readonly long startTimestamp;
 
-        public BuildingState(int partCount, string craftName, long startTimestamp)
+        public BuildingState(long timestamp, StateConfig config, Part part)
         {
-            this.partCount = partCount;
-            this.craftName = craftName;
-            this.startTimestamp = startTimestamp;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj != null && obj is BuildingState)
-            {
-                BuildingState buildingState = (BuildingState)obj;
-
-                return buildingState.partCount == partCount && buildingState.craftName == craftName && buildingState.startTimestamp == startTimestamp; ;
-            }
-
-            return false;
+            this.startTimestamp = timestamp;
+            this.details = config.details;
+            this.state = config.state;
+            this.part = part;
         }
 
         public DiscordRpc.RichPresence create()
         {
             return new DiscordRpc.RichPresence()
             {
-                state = string.Format("{0} parts", partCount),
-                details = string.Format("Building {0}", craftName),
+                state = TextParser.ParseVariables(state, part),
+                details = TextParser.ParseVariables(details, part),
                 largeImageKey = "building_craft",
                 largeImageText = "Building a craft",
                 startTimestamp = startTimestamp,
@@ -41,5 +32,5 @@ namespace DiscordRP.States
                 smallImageText = "Kerbal Space Program",
             };
         }
-    }
+    };
 }

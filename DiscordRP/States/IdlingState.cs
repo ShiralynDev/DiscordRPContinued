@@ -7,23 +7,15 @@ namespace DiscordRP.States
     {
         private readonly long startTimestamp;
         private readonly GameScenes scene;
+        private readonly string details;
+        private readonly string state;
 
-        public IdlingState(long startTimestamp, GameScenes scene)
+        public IdlingState(long startTimestamp, GameScenes scene, StateConfig stateConfig)
         {
             this.startTimestamp = startTimestamp;
             this.scene = scene;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj != null && obj is IdlingState)
-            {
-                IdlingState idleState = (IdlingState)obj;
-
-                return idleState.startTimestamp == startTimestamp && idleState.scene == scene;
-            }
-
-            return false;
+            this.details = stateConfig.details;
+            this.state = stateConfig.state;
         }
 
         public DiscordRpc.RichPresence create()
@@ -32,7 +24,7 @@ namespace DiscordRP.States
 
             return new DiscordRpc.RichPresence()
             {
-                state = "Idle",
+                state = state,
                 details = sceneDescription,
                 largeImageKey = "default",
                 largeImageText = "Idling",
@@ -45,12 +37,16 @@ namespace DiscordRP.States
         private String GetSceneDescription()
         {
             int modCount = AssemblyLoader.loadedAssemblies.Count;
-            int activeVessels = FlightGlobals.Vessels.Count(v =>
-                v.vesselType != VesselType.Debris &&
-                v.vesselType != VesselType.Flag &&
-                v.vesselType != VesselType.SpaceObject &&
-                v.vesselType != VesselType.Unknown
-            );
+            int activeVessels = 0;
+            if (scene == GameScenes.TRACKSTATION)
+            {
+                activeVessels = FlightGlobals.Vessels.Count(v =>
+                    v.vesselType != VesselType.Debris &&
+                    v.vesselType != VesselType.Flag &&
+                    v.vesselType != VesselType.SpaceObject &&
+                    v.vesselType != VesselType.Unknown
+                );
+            }
 
             switch (scene)
             {

@@ -5,6 +5,11 @@ using System.Security.Cryptography;
 
 namespace DiscordRP
 {
+    class StateConfig
+    {
+        public string details = "temp";
+        public string state = "temp";
+    }
     class StateTracker
     {
         private readonly GameStateTimer launchStateTimer;
@@ -13,11 +18,14 @@ namespace DiscordRP
         private readonly GameStateTimer buildingStateTimer;
 
         private readonly GameStateTimer idleStateTimer;
+        private readonly StateConfig[] stateConfigs;
 
         public bool Paused { private get; set; }
 
-        public StateTracker()
+        public StateTracker(StateConfig[] stateConfigs)
         {
+            this.stateConfigs = stateConfigs;
+
             this.launchStateTimer = new GameStateTimer(scene => HighLogic.LoadedSceneIsGame && FlightGlobals.ActiveVessel != null, scene => !FlightGlobals.ActiveVessel.Landed && !FlightGlobals.ActiveVessel.Splashed);
             this.landedStateTimer = GameStateTimer.Inverse(launchStateTimer);
 
@@ -51,11 +59,11 @@ namespace DiscordRP
                 }
                 else if (rootEditorPart != null)
                 {
-                    return new BuildingState(Utils.GetTotalParts(rootEditorPart), Utils.GetCraftName(), buildingStateTimer.Timestamp);
+                    return new BuildingState(buildingStateTimer.Timestamp, stateConfigs[0], rootEditorPart);
                 }
             }
 
-            return new IdlingState(idleStateTimer.Timestamp, HighLogic.LoadedScene);
+            return new IdlingState(idleStateTimer.Timestamp, HighLogic.LoadedScene, stateConfigs[3]);
         }
 
         private PresenceState GetFlightState(Vessel activeVessel)
@@ -65,23 +73,23 @@ namespace DiscordRP
 
             if (activeVessel.Landed)
             {
-                return new LandedState(activeVessel.mainBody, activeVessel.latitude, activeVessel.longitude, landedStateTimer.Timestamp, Paused);
+                return new LandedState(activeVessel.mainBody, landedStateTimer.Timestamp, Paused, stateConfigs[4]);
             }
             else if (activeVessel.Splashed)
             {
-                return new SplashedState(activeVessel.mainBody, activeVessel.latitude, activeVessel.longitude, landedStateTimer.Timestamp, Paused);
+                return new SplashedState(activeVessel.mainBody, landedStateTimer.Timestamp, Paused, stateConfigs[5]);
             }
             else if (apoapsis > activeVessel.mainBody.sphereOfInfluence || (apoapsis < 0.0 && periapsis > apoapsis))
             {
-                return new EscapingState(activeVessel.mainBody, launchStateTimer.Timestamp, Paused);
+                return new EscapingState(activeVessel.mainBody, launchStateTimer.Timestamp, Paused, stateConfigs[1]);
             }
             else if (activeVessel.mainBody.atmosphereDepth > activeVessel.altitude || periapsis < activeVessel.mainBody.Radius)
             {
-                return new FlyingState(activeVessel.mainBody, activeVessel.altitude, activeVessel.srfSpeed, activeVessel.vesselName, launchStateTimer.Timestamp, Paused);
+                return new FlyingState(activeVessel.mainBody, launchStateTimer.Timestamp, Paused, stateConfigs[2]);
             }
             else
             {
-                return new OrbitingState(activeVessel.mainBody, apoapsis, periapsis, activeVessel.orbit.eccentricity, activeVessel.vesselName, launchStateTimer.Timestamp, Paused);
+                return new OrbitingState(activeVessel.mainBody, launchStateTimer.Timestamp, Paused, stateConfigs[6]);
             }
         }
     }

@@ -5,6 +5,7 @@ cp -r ./DiscordRP/Libraries/linux ./DiscordRPContinued/Plugins/
 cp -r ./DiscordRP/Libraries/osx ./DiscordRPContinued/Plugins/
 cp -r ./DiscordRP/Libraries/win32 ./DiscordRPContinued/Plugins/
 cp -r ./DiscordRP/Libraries/win64 ./DiscordRPContinued/Plugins/
+cp -r ./DiscordRP/Textures ./DiscordRPContinued/
 cp ./LICENSE ./DiscordRPContinued/LICENSE
 
 if [ $# -eq 1 ]; then

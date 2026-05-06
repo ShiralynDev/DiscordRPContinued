@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using DiscordRP.StateTextFormat;
 
 namespace DiscordRP.States
 {
@@ -8,34 +9,25 @@ namespace DiscordRP.States
         private readonly CelestialBody body;
         private readonly long startTimestamp;
         private readonly bool paused;
+        private string details;
+        private string state;
 
-        public EscapingState(CelestialBody body, long startTimestamp, bool paused)
+        public EscapingState(CelestialBody body, long timestamp, bool paused, StateConfig stateConfig)
         {
             this.body = body;
-            this.startTimestamp = startTimestamp;
+            this.startTimestamp = timestamp;
             this.paused = paused;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj != null && obj is EscapingState)
-            {
-                EscapingState escapingState = (EscapingState) obj;
-
-                return escapingState.body.Equals(body) && escapingState.startTimestamp == startTimestamp && escapingState.paused == paused;
-            }
-
-            return false;
+            details = stateConfig.details;
+            state = stateConfig.state;
         }
 
         public DiscordRpc.RichPresence create()
         {
-            string state = state = string.Format("Escaping {0}", body.name);
 
             return new DiscordRpc.RichPresence()
             {
-                state = state,
-                details = "At escape velocity",
+                state = TextParser.ParseVariables(state, null, body),
+                details = TextParser.ParseVariables(details, null, body),
                 largeImageKey = string.Format("body_{0}", body.name.ToLower()),
                 largeImageText = body.name,
                 startTimestamp = startTimestamp,

@@ -1,47 +1,32 @@
 ﻿using System;
 using UnityEngine;
+using DiscordRP.StateTextFormat;
 
 namespace DiscordRP.States
 {
     class FlyingState : PresenceState
     {
         private readonly CelestialBody body;
-        private readonly double altitude;
-        private readonly double velocity;
-        private readonly string craftName;
         private readonly long startTimestamp;
         private readonly bool paused;
+        private readonly string details;
+        private readonly string state;
 
-        public FlyingState(CelestialBody body, double altitude, double velocity, string craftName, long startTimestamp, bool paused)
+        public FlyingState(CelestialBody body, long startTimestamp, bool paused, StateConfig stateConfig)
         {
             this.body = body;
-            this.altitude = altitude;
-            this.velocity = velocity;
-            this.craftName = craftName;
             this.startTimestamp = startTimestamp;
             this.paused = paused;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj != null && obj is FlyingState)
-            {
-                FlyingState flyingState = (FlyingState)obj;
-
-                return flyingState.body.Equals(body) && flyingState.altitude == altitude && flyingState.velocity == velocity && this.craftName == craftName && flyingState.startTimestamp == startTimestamp && flyingState.paused == paused;
-            }
-
-            return false;
+            this.details = stateConfig.details;
+            this.state = stateConfig.state;
         }
 
         public DiscordRpc.RichPresence create()
         {
-            string state = state = string.Format("Flying over {0}", body.name);
-
             return new DiscordRpc.RichPresence()
             {
-                state = state,
-                details = string.Format("Flying in {0} | Alt: {1:F0}m | Vel: {2:F0}m/s", craftName, altitude, velocity),
+                state = TextParser.ParseVariables(state, null, body),
+                details = TextParser.ParseVariables(details, null, body),
                 largeImageKey = string.Format("body_{0}", body.name.ToLower()),
                 largeImageText = body.name,
                 startTimestamp = startTimestamp,

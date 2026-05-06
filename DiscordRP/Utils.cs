@@ -45,13 +45,16 @@ namespace DiscordRP
 
         public static int GetTotalParts(Part part)
         {
-            int parts = 1;
-
-            foreach (Part child in part.children)
+            int parts = 0;
+            if (part != null)
             {
-                parts += GetTotalParts(child);
-            }
+                parts = 1;
 
+                foreach (Part child in part.children)
+                {
+                    parts += GetTotalParts(child);
+                }
+            }
             return parts;
         }
 
@@ -62,6 +65,13 @@ namespace DiscordRP
             if (HighLogic.LoadedSceneIsEditor)
             {
                 name = EditorLogic.fetch.ship.shipName;
+            }
+            else if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (FlightGlobals.ActiveVessel != null)
+                {
+                    name = FlightGlobals.ActiveVessel.vesselName;
+                }
             }
 
             return name;
