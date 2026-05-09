@@ -7,27 +7,58 @@ namespace DiscordRP.Discord
 {
     class PresenceController
     {
+        private DiscordRpc.EventHandlers handlers;
+        private DiscordRpc.ReadyCallback readyCallback;
+        private DiscordRpc.DisconnectedCallback disconnectedCallback;
+        private DiscordRpc.ErrorCallback errorCallback;
+        private DiscordRpc.JoinCallback joinCallback;
+        private DiscordRpc.SpectateCallback spectateCallback;
+        private DiscordRpc.RequestCallback requestCallback;
+
+        public bool initialized;
         private const string applicationId = "386261941259337738";
 
-        public void Initialize()
+        public bool Initialize()
         {
-            DiscordRpc.EventHandlers handlers = new DiscordRpc.EventHandlers();
-            handlers.readyCallback = ReadyCallback;
-            handlers.disconnectedCallback += DisconnectedCallback;
-            handlers.errorCallback += ErrorCallback;
-            handlers.joinCallback += JoinCallback;
-            handlers.spectateCallback += SpectateCallback;
-            handlers.requestCallback += RequestCallback;
+            try
+            {
+                readyCallback = ReadyCallback;
+                disconnectedCallback = DisconnectedCallback;
+                errorCallback = ErrorCallback;
+                joinCallback = JoinCallback;
+                spectateCallback = SpectateCallback;
+                requestCallback = RequestCallback;
 
-            DiscordRpc.Initialize(applicationId, ref handlers, true, null);
+                handlers = new DiscordRpc.EventHandlers();
 
-            Debug.Log("DiscordRP: Discord Initialize");
+                handlers.readyCallback = readyCallback;
+                handlers.disconnectedCallback = disconnectedCallback;
+                handlers.errorCallback = errorCallback;
+                handlers.joinCallback = joinCallback;
+                handlers.spectateCallback = spectateCallback;
+                handlers.requestCallback = requestCallback;
+
+                DiscordRpc.Initialize(applicationId, ref handlers, true, null);
+
+                initialized = true;
+
+                Debug.Log("DiscordRP: Discord Initialize");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"DiscordRP initialize fail: {ex}");
+
+                initialized = false;
+                return false;
+            }
         }
 
         public void Disable()
         {
             DiscordRpc.Shutdown();
             Debug.Log("DiscordRP: Discord Shutdown");
+            initialized = false;
         }
 
         public void UpdatePresence(PresenceState state)

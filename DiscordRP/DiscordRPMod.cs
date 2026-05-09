@@ -20,8 +20,6 @@ namespace DiscordRP
         private float lastUpdate = 0.0F;
         private float updateInterval = 15.0F;
 
-        private bool initialized;
-
         ToolbarControl toolbarControl;
         private Rect windowRect = new Rect(200, 200, 500, 500);
         private bool showWindow = false;
@@ -63,19 +61,19 @@ namespace DiscordRP
                 stateConfigs[i] = new StateConfig();
             }
 
-            lastUpdate = Time.time;
-            state = new IdlingState(Utils.GetEpochTime(), GameScenes.LOADING, stateConfigs[3]);
+            presenceController = new PresenceController();
+            presenceController.Initialize();
         }
 
         void Start()
         {
-            presenceController = new PresenceController();
-            presenceController.Initialize();
-
             LoadSettings();
             stateTracker = new StateTracker(stateConfigs);
 
             UnityEngine.Debug.Log("DiscordRP: Plugin startup");
+
+            lastUpdate = Time.time;
+            state = new IdlingState(Utils.GetEpochTime(), GameScenes.LOADING, stateConfigs[3]);
 
             DontDestroyOnLoad(this);
 
@@ -96,14 +94,16 @@ namespace DiscordRP
             {
                 stateTracker.Paused = true;
 
-                UpdatePresence(stateTracker.UpdateState());
+                if (presenceController.initialized)
+                    UpdatePresence(stateTracker.UpdateState());
             });
 
             GameEvents.onGameUnpause.Add(() =>
             {
                 stateTracker.Paused = false;
 
-                UpdatePresence(stateTracker.UpdateState());
+                if (presenceController.initialized)
+                    UpdatePresence(stateTracker.UpdateState());
             });
         }
 
@@ -113,25 +113,27 @@ namespace DiscordRP
             presenceController.Disable();
 
             toolbarControl.OnDestroy();
-
-            initialized = false;
         }
 
         void Update()
         {
+            if (!presenceController.initialized)
+            {
+                presenceController.Initialize(); // retry to init on failure
+                return;
+            }
+
             presenceController.UpdateCallbacks();
 
             stateTracker.UpdateTimers();
 
             float currentTime = Time.time;
 
-            if (currentTime - lastUpdate > updateInterval || !initialized)
+            if (currentTime - lastUpdate > updateInterval)
             {
                 lastUpdate = currentTime;
 
                 UpdatePresence(stateTracker.UpdateState());
-
-                initialized = true;
             }
         }
 
@@ -193,7 +195,7 @@ namespace DiscordRP
 
             this.state = state;
 
-            if (!state.Equals(previousState) || !initialized)
+            if (!state.Equals(previousState))
             {
                 presenceController.UpdatePresence(state);
             }
@@ -242,6 +244,10 @@ namespace DiscordRP
                 if (result != 0.0f)
                     updateInterval = result;
             }
+            if (presenceController.initialized)
+                GUILayout.Label("DiscordRP is initialized");
+            else
+                GUILayout.Label("DiscordRP is NOT initialized");
         }
 
         private int selectedStatePage = 0;
